@@ -1,2 +1,5 @@
 [browser]
 gatherUsageStats = false
+
+[build-system]
+requires = ["python>=3.6", "plotly"]
