@@ -31,7 +31,7 @@ def main():
     if selected_tab == "Main":
         dashboard(product)
         
-    if selected_tab == "Locations":
+    if selected_tab == "Miscellaneous":
         with st.container():
             st.header("Locations")
             location(info)
@@ -42,7 +42,6 @@ def main():
 def dashboard(data):
     st.header("Sales Trends Analysis")
     
-    st.subheader("Overall")
     col1, col2 = st.columns(2)
     with col1:
         sales_by_category = data.groupby('category_name')['salesTotal'].sum().reset_index()
@@ -54,14 +53,6 @@ def dashboard(data):
         data['totalProfit'] = data['profit'] + data['sellyProfit']
         profit_by_category = data.groupby('category_name')['totalProfit'].sum().reset_index()
         plot_donut_chart(profit_by_category, 'totalProfit', 'Profit by Category', col2)
-        
-        selected_category = st.sidebar.selectbox('Select Category', sorted(data['category_name'].unique()))
-        filtered_data = data[data['category_name'] == selected_category]
-        fig = go.Figure()
-        fig.add_trace(go.Bar(x=filtered_data.index, y=filtered_data['base'], name='Base'))
-        fig.add_trace(go.ErrorBar(x=filtered_data.index, y=filtered_data['base'], error_y=dict(type='data', symmetric=False, array=filtered_data['base'] - filtered_data['minimum'], arrayminus=filtered_data['maximum'] - filtered_data['base']), name='Error Bar'))
-        fig.update_layout(xaxis=dict(tickmode='array', tickvals=filtered_data.index, ticktext=filtered_data.index, title='Data Points'), yaxis=dict(title='Price'), title=f'Category: {selected_category}')
-        col2.plotly_chart(fig)
     
     st.subheader('Top-Selling Products')
     top_products = data.groupby('inventory_name')['salesTotal'].sum().reset_index().nlargest(5, 'salesTotal')
